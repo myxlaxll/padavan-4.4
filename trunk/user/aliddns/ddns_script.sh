@@ -20,7 +20,10 @@ arIpAddress6 () {
 
 
 #ifconfig $(nvram get wan0_ifname_t) | awk '/Global/{print $3}' | awk -F/ '{print $1}'
-ifconfig br0 | awk '/Global/{print $3}' | awk -F/ '{print $1}'
+#ifconfig br0 | awk '/Global/{print $3}' | awk -F/ '{print $1}'
+#ip -6 neigh show | grep '50:eb:f6:20:05:4b' | grep '24' | grep -o "^\S\+" | head -n 1
+#网络邻居显示   	包含'MAC地址'  	包含 '24'开头	去掉后面	第一行
+
 }
 if [ "$IPv6" = "1" ] ; then
 arIpAddress=$(arIpAddress6)
