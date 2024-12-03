@@ -19,7 +19,7 @@ arIpAddress6 () {
 # IPv6地址获取
 
 
-#ifconfig $(nvram get wan0_ifname_t) | awk '/Global/{print $3}' | awk -F/ '{print $1}'
+#ifconfig $(nvram get lan0_ifname_t) | awk '/Global/{print $3}' | awk -F/ '{print $1}'
 #ifconfig br0 | awk '/Global/{print $3}' | awk -F/ '{print $1}'
 #ip -6 neigh show | grep 'MAC地址' | grep '24' | grep -o "^\S\+" | head -n 1
 #网络邻居显示   	包含'MAC地址'  	包含 '24'开头	去掉后面	第一行
