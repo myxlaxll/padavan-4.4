@@ -215,12 +215,12 @@ do
 			a_ip6=/tmp/ip6_neighbor.log
 			touch $a_ip6
 
-			ip -6 neigh show | grep '$inf_MAC' | grep '$inf_match' | grep -v "$inf_v_match" | grep -o "^\S\+" | head -n 1 > $a_ip6
+			ip -6 neigh show | grep i '$inf_MAC' | grep i '$inf_match' | grep -v "$inf_v_match" | grep -o "^\S\+" | head -n 1 > $a_ip6
 			#临时IPv6地址(可访问的)写入a_ip6
 
 			b_ip6=/tmp/static_ip6.inf
 			touch $b_ip6
-			echo "$(cat $a_ip6) "\n"" >> $b_ip6
+			echo "$(cat $a_ip6)\n" >> $b_ip6
 			}			
 		
 		inet6_neighbor="$(cat /tmp/ip6_neighbor.log)"
