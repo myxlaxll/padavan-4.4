@@ -216,7 +216,8 @@ do
 			b_ip6=/tmp/ip6_neighbor.log
 			c_ip6=/tmp/static_ip6.inf
 			touch $a_ip6 $b_ip6 $c_ip6
-			ip -f inet6 neighbor show > $a_ip6
+			neighbors=$(ip -f inet6 neighbor show)
+   			echo $neighbors > $a_ip6
 			ip6_addrget="$(cat /tmp/ip6_neighbor.tmp | grep -i '$inf_MAC' | grep -i '$inf_match' | grep -v '$inf_v_match' | grep -o "^\S\+" | head -n 1)"
 			echo -e "$ip6_addrget\n" >> $c_ip6
 			echo $ip6_addrget > $b_ip6
