@@ -60,6 +60,7 @@ if [ ! -z "$(echo $scriptfilepath | grep -v "/tmp/script/" | grep aliddns)" ]  &
 	chmod 777 /tmp/script/_aliddns
 fi
 
+
 aliddns_restart () {
 
 relock="/var/lock/aliddns_restart.lock"
@@ -189,6 +190,108 @@ if [ "$aliddns_domain6"x != "x" ] && [ "$aliddns_name6"x != "x" ] ; then
 	name="$aliddns_name6"
 	arDdnsCheck $aliddns_domain6 $aliddns_name6
 fi
+
+source /etc/storage/ddns_script.sh
+while read line
+do
+	line=`echo $line | cut -d '#' -f1`
+	line=$(echo $line)
+	[ -z "$line" ] && continue
+	sleep 1
+	IPv6=1
+	timestamp=`date -u "+%Y-%m-%dT%H%%3A%M%%3A%SZ"`
+	IPv6_neighbor=1
+	aliddns_record_id=""
+	name="$(echo "$line" | cut -d '@' -f1)"
+	domain="$(echo "$line" | cut -d '@' -f2)"
+	inf_MAC="$(echo "$line" | cut -d '@' -f3 | tr 'A-Z' 'a-z')"
+	inf_match="$(echo "$line" | cut -d '@' -f4)"
+	inf_v_match="$(echo "$line" | cut -d '@' -f5)"
+	[ -z "$inf_v_match" ] && inf_v_match="inf_v_match"
+	inet6_neighbor="$(echo "$line" | cut -d '@' -f6)"
+	inet6_neighbor=$(echo $inet6_neighbor)
+	if [ -z "$inet6_neighbor" ] ; then
+		{
+			a_ip6=/tmp/ip6_neighbor.tmp
+			b_ip6=/tmp/ip6_neighbor.log
+			c_ip6=/tmp/ip6_ifconfig.tmp
+			touch $a_ip6 $b_ip6 $c_ip6
+
+# 创建三个文件
+# 根据网络接口 ip6 提取前2段匹配的 ip6
+			ifconfig | grep inet6 | grep -E "Global|Link" | grep -v FAILED > $c_ip6
+			echo "$(awk -F ' ' '\
+				NR==FNR{\
+					split($3, arrtmp, ":");\
+						atmp=arrtmp[1]":"arrtmp[2];\
+						a[atmp]++;\
+						}\
+					NR>FNR{\
+						split($0, arrtmp, ":");\
+						atmp=arrtmp[1]":"arrtmp[2];\
+					if(atmp in a) {\
+						print $0;\
+								}\
+						}' $c_ip6 $b_ip6)" > $b_ip6
+# [a =>> b] 合并更新 MAC ip6
+# 提取 b 文件旧的 MAC ip6
+# 合并 a 文件新的 MAC ip6
+# 得到 b 文件 MAC 更新的 ip6
+			ip -f inet6 neighbor show | grep -v FAILED | grep -v INCOMPLETE | grep -v router | grep br0 > $a_ip6
+			echo "$(awk -F ' ' '\
+				NR==FNR{\
+						split($0, arrtmp, ":");\
+						atmp=arrtmp[1]":"arrtmp[2]$5;\
+						a[atmp]++;\
+					}\
+				NR>FNR{\
+						split($0, arrtmp, ":");\
+						atmp=arrtmp[1]":"arrtmp[2]$5;\
+						if(!(atmp in a)) {\
+							print $0;\
+						}\
+					}' $a_ip6 $b_ip6)" > $b_ip6
+						echo "$(cat $a_ip6)" >> $b_ip6
+			sed -e '/^$/d' -i $b_ip6
+
+			tmp_ip6=/tmp/static_ip.tmp
+			d_ip6=/tmp/static_ip.inf
+			e_ip6=/tmp/static_ip6.inf
+			touch $tmp_ip6 $d_ip6 $e_ip6
+			cat $d_ip6 | tr '[A-Z]' '[a-z]' | tr ',' ' ' > $tmp_ip6
+# 提取 IPv6 广播中继: WAN to LAN 的二级路由客户端
+			echo "$(awk -F ' ' '\
+				NR==FNR{\
+					atmp=$2;\
+					atmp=tolower(atmp);\
+					a[atmp]++\
+				}\
+				NR>FNR{\
+					atmp=$5;\
+					if(!(atmp in a)) {\
+						print $5;\
+					}\
+				}' $tmp_ip6 $a_ip6)" > $e_ip6
+# 数据去重
+			awk '!a[$0]++' $e_ip6 > $tmp_ip6
+			sed -e '/^$/d' -i $tmp_ip6
+# 构建 MAC 数据
+			echo "$(awk '{\
+				if($0) {\
+					a=$0;\
+					a=toupper(a);\
+					print "----,"a",*,1,0,0";\
+				}\
+			}' $tmp_ip6)" > $e_ip6
+			sed -e '/^$/d' -i $e_ip6
+			echo -n "$(cat $e_ip6 | grep "," | wc -l)" > /tmp/static_ip6.num
+		}
+		
+		inet6_neighbor="$(cat /tmp/ip6_neighbor.log | grep "$inf_MAC" | grep -v "$inf_v_match" | grep "$inf_match" | awk -F ' ' '{print $1}' | sed -n '$p')"
+	fi
+	[ ! -z "$inet6_neighbor" ] && arDdnsCheck $domain $name
+	IPv6_neighbor=0
+done < /tmp/ip6_ddns_inf
 
 }
 
@@ -485,12 +588,32 @@ arIpAddress6 () {
 # IPv6地址获取
 # 因为一般ipv6没有nat ipv6的获得可以本机获得
 ifconfig $(nvram get wan0_ifname_t) | awk '/Global/{print $3}' | awk -F/ '{print $1}'
+#curl -6 -L --user-agent "$user_agent" -s "https://[2606:4700:4700::1002]/cdn-cgi/trace" | awk -F= '/ip/{print $2}'
 }
+if [ "$IPv6_neighbor" != "1" ] ; then
 if [ "$IPv6" = "1" ] ; then
 arIpAddress=$(arIpAddress6)
 else
 arIpAddress=$(arIpAddress)
 fi
+else
+arIpAddress=$inet6_neighbor
+inet6_neighbor=""
+IPv6_neighbor=0
+fi
+
+# 根据 ip -f inet6 neighbor show 获取终端的信息，设置 ddns 解析，实现每个终端的 IPV6 动态域名
+# 参数说明：使用 @ 符号分割，①前缀名称 ②域名 ③MAC【不限大小写】
+# ④匹配关键词的ip6地址【可留空】 ⑤排除关键词的ip6地址【可留空】 ⑥手动指定ip【可留空】 
+# 下面是信号填写例子：（删除前面的#可生效）
+cat >/tmp/ip6_ddns.inf <<-\EOF
+#www@google.com@09:9B:9A:90:9F:D9@@fe80::@  #参数填写例子
+
+
+
+EOF
+cat /tmp/ip6_ddns.inf | grep -v '^#'  | grep -v '^$' > /tmp/ip6_ddns_inf
+rm -f /tmp/ip6_ddns.inf
 EEE
 	chmod 755 "$ddns_script"
 fi
@@ -517,4 +640,3 @@ keep)
 	aliddns_check
 	;;
 esac
-
