@@ -221,9 +221,8 @@ do
 			b_ip6=/tmp/static_ip6.inf
 			touch $b_ip6
 			echo -e "$(cat $a_ip6)\n" >> $b_ip6
-			}			
-		
-		inet6_neighbor="$(cat /tmp/ip6_neighbor.log)"
+		 inet6_neighbor="$(cat /tmp/ip6_neighbor.log)"
+   }
 	fi
 	[ ! -z "$inet6_neighbor" ] && arDdnsCheck $domain $name
 	IPv6_neighbor=0
