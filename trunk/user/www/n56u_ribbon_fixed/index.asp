@@ -791,7 +791,7 @@ $j(document).ready(function(){
         </div>
     </div>
 
-    <div id="footer" style="display: none"></div>
+    <div id="footer"></div>
     <script>
     if(flag == "Internet" || flag == "Client")
         $("statusframe").src = "";
