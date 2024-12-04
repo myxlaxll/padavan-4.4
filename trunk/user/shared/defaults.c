@@ -37,7 +37,7 @@ struct nvram_pair router_defaults[] = {
 	{ "log_float_ui", "1" },		/* WebUI syslog float panel mode */
 	{ "log_ipaddr", "" },			/* syslog recipient IP */
 	{ "log_port", "514" },			/* syslog recipient Port */
-	{ "log_level", "0" },			/* Bitmask 0:off 1:denied 2:accepted */
+	{ "log_level", "2" },			/* Bitmask 0:off 1:denied 2:accepted */
 	{ "console_loglevel", "0" },		/* Kernel panics only */
 	{ "stats_server", "" },			/* URL for posting stats */
 
