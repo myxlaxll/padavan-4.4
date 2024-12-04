@@ -740,7 +740,7 @@ function show_menu(L1, L2, L3){
 function show_footer(){
 
  footer_code = '<div align="center">\n';
-	footer_code +='<span>Copyright © 2015-2025 Padavan</span>\n';
+	footer_code +='<span>Copyright © 2014-2025 Padavan</span>\n';
  footer_code +='</div>\n';
 
 	$("footer").innerHTML = footer_code;
