@@ -224,7 +224,8 @@ do
 	inet6_neighbor=$(echo $inet6_neighbor)
 	if [ -z "$inet6_neighbor" ] ; then
 			
-			ip6_addrget=$($a_ip6 | grep -i '$inf_MAC' | grep -i '$inf_match' | grep -v '$inf_v_match' | grep -o "^\S\+" | head -n 1)
+			ip6_addrget="$(echo "$a_ip6" | grep -i '$inf_MAC' | grep -i '$inf_match' | grep -v '$inf_v_match' | grep -o "^\S\+" | head -n 1)"
+   			
 			echo "$ip6_addrget" >> $c_ip6
 			echo "$ip6_addrget" > $b_ip6
 			inet6_neighbor=$ip6_addrget
