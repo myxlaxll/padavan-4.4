@@ -213,7 +213,7 @@ do
 	timestamp=`date -u "+%Y-%m-%dT%H%%3A%M%%3A%SZ"`
 	IPv6_neighbor=1
 	aliddns_record_id=""
- 	aliddns_record_id=""
+	ip6_addrget=""
 	name="$(echo "$line" | cut -d '@' -f1)"
 	domain="$(echo "$line" | cut -d '@' -f2)"
 	inf_MAC="$(echo "$line" | cut -d '@' -f3 | tr 'A-Z' 'a-z')"
