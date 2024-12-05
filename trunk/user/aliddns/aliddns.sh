@@ -165,6 +165,17 @@ kill_ps "$scriptname"
 
 aliddns_start () {
 IPv6=0
+
+a_ip6=/tmp/ip6_neighbor.log
+b_ip6=/tmp/ip6_neighbor_addr.log
+c_ip6=/tmp/static_ip6.inf
+touch $a_ip6 $b_ip6 $c_ip6
+neighbors=$(ip -f inet6 neighbor show)
+echo $neighbors > $a_ip6
+sed -i 's/ STALE /\n/g' /tmp/ip6_neighbor.log
+sed -i 's/ REACHABLE /\n/g' /tmp/ip6_neighbor.log
+sed -i 's/ FAILED /\n/g' /tmp/ip6_neighbor.log
+
 if [ "$aliddns_domain"x != "x" ] && [ "$aliddns_name"x != "x" ] ; then
 	sleep 1
 	timestamp=`date -u "+%Y-%m-%dT%H%%3A%M%%3A%SZ"`
@@ -211,20 +222,11 @@ do
 	inet6_neighbor="$(echo "$line" | cut -d '@' -f6)"
 	inet6_neighbor=$(echo $inet6_neighbor)
 	if [ -z "$inet6_neighbor" ] ; then
-			a_ip6=/tmp/ip6_neighbor_1.log
-			b_ip6=/tmp/ip6_neighbor_2.log
-			c_ip6=/tmp/static_ip6.inf
-			touch $a_ip6 $b_ip6 $c_ip6
-			neighbors=$(ip -f inet6 neighbor show)
-   			echo $neighbors > $a_ip6
-   			#echo "This is a text with the keyword example, the keyword can be any word" | sed 's/example/\n&/g' FAILED
-   			sed -i 's/ STALE /\n/g' /tmp/ip6_neighbor_1.log
-   			sed -i 's/ REACHABLE /\n/g' /tmp/ip6_neighbor_1.log
-   			sed -i 's/ FAILED /\n/g' /tmp/ip6_neighbor_1.log
-			ip6_addrget="$(cat /tmp/ip6_neighbor_1.log | grep -i '$inf_MAC' | grep -i '$inf_match' | grep -v '$inf_v_match' | grep -o "^\S\+" | head -n 1)"
+			
+			ip6_addrget=(/tmp/ip6_neighbor.log | grep -i '$inf_MAC' | grep -i '$inf_match' | grep -v '$inf_v_match' | grep -o "^\S\+" | head -n 1)
 			echo -e "$ip6_addrget\n" >> $c_ip6
 			echo $ip6_addrget > $b_ip6
-			inet6_neighbor="$(cat /tmp/ip6_neighbor_2.log)"
+			inet6_neighbor="$(cat /tmp/ip6_neighbor_addr.log)"
 	fi
 	[ ! -z "$inet6_neighbor" ] && arDdnsCheck $domain $name
 	IPv6_neighbor=0
