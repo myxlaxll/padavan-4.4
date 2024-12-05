@@ -230,7 +230,7 @@ do
 		#取得第一个空格前的数据-IPv6地址
 		echo "$ip6_addrget" >> $c_ip6
 		echo "$ip6_addrget" > $b_ip6
-		inet6_neighbor=$ip6_addrget
+		inet6_neighbor=$(echo $ip6_addrget)
 	fi
 	[ ! -z "$inet6_neighbor" ] && arDdnsCheck $domain $name
 	IPv6_neighbor=0
