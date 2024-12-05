@@ -215,21 +215,19 @@ do
 	if [ -z "$inet6_neighbor" ] ; then
 		a_ip6=/tmp/ip6_neighbor.log
 		b_ip6=/tmp/ip6_neighbor_addr.log
-		c_ip6=/tmp/static_ip6.inf
-		touch $a_ip6 $b_ip6 $c_ip6
+		touch $a_ip6 $b_ip6
 		neighbors=$(ip -f inet6 neighbor show)
 		echo $neighbors > $a_ip6
 		sed -i 's/ STALE /\n/g' /tmp/ip6_neighbor.log
+		sed -i 's/ DELAY /\n/g' /tmp/ip6_neighbor.log
 		sed -i 's/ REACHABLE /\n/g' /tmp/ip6_neighbor.log
+		sed -i 's/ PROBE /\n/g' /tmp/ip6_neighbor.log
 		sed -i 's/ FAILED /\n/g' /tmp/ip6_neighbor.log
-		#切割完成，IPv6_MAC绑定分行显示
-		cat /tmp/ip6_neighbor.log | grep -v ''$inf_v_match'' | grep -i ''$inf_MAC'' > /tmp/ip6_neighbor_addr.log
-		#去掉内网, 覆盖写入/tmp/ip6_neighbor_addr.log文件内
-		#删除需要排除的MAC地址的行，留下外网临时IPv6-MAC绑定地址
+		#切割完成，分行显示——IPv6地址 接口 MAC地址 邻居状态
+		cat /tmp/ip6_neighbor.log | grep -i ''$inf_MAC'' | grep -i ''$inf_match'' | grep -v ''$inf_v_match''  > /tmp/ip6_neighbor_addr.log
+		# 包含 $inf_MAC(MAC地址) | 包含 $inf_match(如2408等公网前缀) | 排除$inf_v_match(如 fe80:: 内网前缀)
 		ip6_addrget="$(cat /tmp/ip6_neighbor_addr.log | cut -d ' ' -f1 | head -n 1) "
 		#取得第一个空格前的数据-IPv6地址
-		echo "$ip6_addrget" >> $c_ip6
-		echo "$ip6_addrget" > $b_ip6
 		inet6_neighbor=$(echo $ip6_addrget)
 	fi
 	[ ! -z "$inet6_neighbor" ] && arDdnsCheck $domain $name
