@@ -213,6 +213,7 @@ do
 	timestamp=`date -u "+%Y-%m-%dT%H%%3A%M%%3A%SZ"`
 	IPv6_neighbor=1
 	aliddns_record_id=""
+ 	aliddns_record_id=""
 	name="$(echo "$line" | cut -d '@' -f1)"
 	domain="$(echo "$line" | cut -d '@' -f2)"
 	inf_MAC="$(echo "$line" | cut -d '@' -f3 | tr 'A-Z' 'a-z')"
@@ -223,10 +224,10 @@ do
 	inet6_neighbor=$(echo $inet6_neighbor)
 	if [ -z "$inet6_neighbor" ] ; then
 			
-			ip6_addrget=$(/tmp/ip6_neighbor.log | grep -i '$inf_MAC' | grep -i '$inf_match' | grep -v '$inf_v_match' | grep -o "^\S\+" | head -n 1)
-			echo -e "$ip6_addrget\n" >> $c_ip6
-			echo $ip6_addrget > $b_ip6
-			inet6_neighbor="$(cat /tmp/ip6_neighbor_addr.log)"
+			ip6_addrget=$($a_ip6 | grep -i '$inf_MAC' | grep -i '$inf_match' | grep -v '$inf_v_match' | grep -o "^\S\+" | head -n 1)
+			echo "$ip6_addrget" >> $c_ip6
+			echo "$ip6_addrget" > $b_ip6
+			inet6_neighbor=$ip6_addrget
 	fi
 	[ ! -z "$inet6_neighbor" ] && arDdnsCheck $domain $name
 	IPv6_neighbor=0
