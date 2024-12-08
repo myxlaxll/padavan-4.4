@@ -143,21 +143,12 @@
 #define PRINT_MAC(addr)	\
 	addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]
 
-#ifdef DBG
+
 extern int                        DebugLevel;
 extern UINT32                DebugCategory;
 extern UINT32                DebugSubCategory[DBG_LVL_MAX + 1][32];
 
-
-#define MTWF_LOG(Category, SubCategory, Level, Fmt)        \
-        do {        \
-                if ((0x1 << Category) & (DebugCategory))        \
-                        if ((SubCategory) & (DebugSubCategory[Level][Category])); \
-        } while (0)
-
-#else
 #define MTWF_LOG(Category, SubCategory, Level, Fmt)
-#endif
 
 void hex_dump(char *str, unsigned char *pSrcBufVA, unsigned int SrcBufLen);
 void hex_dump_with_lvl(char *str, unsigned char *pSrcBufVA, unsigned int SrcBufLen, int dbglvl);
