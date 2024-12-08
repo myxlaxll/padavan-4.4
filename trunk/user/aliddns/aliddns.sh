@@ -165,7 +165,8 @@ kill_ps "$scriptname"
 
 aliddns_start () {
 IPv6=0
-
+ip -6 neigh flush all
+#清理邻居表缓存，防止出现过期IPv6地址
 if [ "$aliddns_domain"x != "x" ] && [ "$aliddns_name"x != "x" ] ; then
 	sleep 1
 	timestamp=`date -u "+%Y-%m-%dT%H%%3A%M%%3A%SZ"`
