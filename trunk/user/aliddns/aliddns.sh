@@ -165,7 +165,7 @@ kill_ps "$scriptname"
 
 aliddns_start () {
 IPv6=0
-ip -6 neigh flush all
+ip -f inet6 neighbor flush all
 #清理邻居表缓存，防止出现过期IPv6地址
 if [ "$aliddns_domain"x != "x" ] && [ "$aliddns_name"x != "x" ] ; then
 	sleep 1
