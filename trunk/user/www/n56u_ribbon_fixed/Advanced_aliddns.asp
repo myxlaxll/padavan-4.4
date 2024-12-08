@@ -157,11 +157,11 @@ function change_aliddns_enable_bridge(mflag){
                         </div>
 								<div class="row-fluid">
 									<div id="tabMenu" class="submenuBlock"></div>
-									<div class="alert alert-info" style="margin: 10px;">使用 Aliddns 实现顶级个人域名的 ddns 服务。 <a href="https://www.aliyun.com" target="blank"><i><u>Aliddns 主页</u></i></a>
+									<div class="alert alert-info" style="margin: 10px;">使用 Aliddns 实现顶级个人域名的 ddns 服务。
 												<ul style="padding-top:5px;margin-top:10px;float: left;">
-												<li><a href="https://github.com/kyriosli/koolshare-aliddns" target="blank"><i><u>Aliddns 项目地址：https://github.com/kyriosli/koolshare-aliddns</u></i></a></li>
-												<li><a href="http://koolshare.cn/thread-64703-1-1.html" target="blank"><i><u>Aliddns 使用帮助：http://koolshare.cn/thread-64703-1-1.html</u></i></a></li>
-												<li>使用前需要将域名添加到 aliyun 中，并添加一条A记录，使用之后将自动更新ip</li>
+												<li>阿里云注册一个域名</li>
+												<li>设置解析记录，AAAA为IPv6</li>
+												<li>填入相关数据，使用后将自动更新IP解析</li>
 												<li>点 <a href="https://help.aliyun.com/knowledge_detail/39844.html" target="blank"><i><u>这里</u></i></a> 查看不同域名注册商修改 DNS 方法。</li>
 												<li>点 <a href="https://help.aliyun.com/knowledge_detail/38738.html" target="blank"><i><u>这里</u></i></a> 查看如何获取 Aliddns 的 Access Key ID 和 Access Key Secret。</li>
 												</ul>
