@@ -167,7 +167,7 @@ aliddns_start () {
 IPv6=0
 ip -f inet6 neighbor flush all
 #清理邻居表缓存，防止出现过期IPv6地址
-sleep 10
+sleep 1
 #ip -f inet6 neighbor show
 if [ "$aliddns_domain"x != "x" ] && [ "$aliddns_name"x != "x" ] ; then
 	sleep 1
