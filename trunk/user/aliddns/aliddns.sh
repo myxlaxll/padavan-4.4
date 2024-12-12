@@ -221,6 +221,7 @@ do
 		touch $a_ip6 $b_ip6
 		neighbors=$(ip -f inet6 neighbor show)
 		echo $neighbors > $a_ip6
+		sed -i 's/ INCOMPLETE /\n/g' /tmp/ip6_neighbor.log
 		sed -i 's/ STALE /\n/g' /tmp/ip6_neighbor.log
 		sed -i 's/ DELAY /\n/g' /tmp/ip6_neighbor.log
 		sed -i 's/ REACHABLE /\n/g' /tmp/ip6_neighbor.log
