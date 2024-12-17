@@ -220,9 +220,9 @@ do
 	inet6_neighbor="$(echo "$line" | cut -d '@' -f6)"
 	inet6_neighbor=$(echo $inet6_neighbor)
 	if [ -z "$inet6_neighbor" ] ; then
-		a_ip6=/tmp/ip6_neighbor.log
+		#a_ip6=/tmp/ip6_neighbor.log
 		b_ip6=/tmp/ip6_neighbor_addr.log
-		touch $a_ip6 $b_ip6
+		touch $b_ip6
 		#neighbors=$(ip -f inet6 neighbor show)
 		#echo $neighbors > $a_ip6
 		#sed -i 's/ INCOMPLETE /\n/g' /tmp/ip6_neighbor.log
