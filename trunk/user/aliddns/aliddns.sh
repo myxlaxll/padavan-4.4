@@ -220,7 +220,7 @@ do
 		touch $a_ip6
 		cat /tmp/ipv6address.txt | grep -i ''$inf_MAC'' | grep -i ''$inf_match'' | grep -v ''$inf_v_match'' | tail -n 1  > /tmp/ip6_neighbor_addr.log
 		# 包含 $inf_MAC(MAC地址) | 包含 $inf_match(如2408等公网前缀) | 排除$inf_v_match(如 fe80:: 内网前缀)
-		ip6_addrget="$(cat /tmp/ip6_neighbor_addr.log | cut -d ' ' -f1 | head -n 1) "
+		ip6_addrget="$(cat /tmp/ip6_neighbor_addr.log | cut -d ' ' -f1) "
 		#取得第一个空格前的数据-IPv6地址
 		inet6_neighbor=$(echo $ip6_addrget)
 	fi
