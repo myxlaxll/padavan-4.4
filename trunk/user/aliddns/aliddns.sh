@@ -165,11 +165,7 @@ kill_ps "$scriptname"
 
 aliddns_start () {
 IPv6=0
-ip -f inet6 neighbor flush all
-sleep 3
-ip -6 neigh show
-#清理邻居表缓存，防止出现过期IPv6地址
-sleep 3
+sleep 1
 a_ip6_neigh=/tmp/ipv6address.txt
 touch $a_ip6_neigh
 ip -6 neigh show > $a_ip6_neigh
